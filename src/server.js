@@ -1,8 +1,13 @@
 import express from "express";
+import {config} from "dotenv";
+import {connectDB, disconnectDB} from "./config/db.js";
+
 
 //Importing routes
 import movieRoutes from "./routes/movieRoutes.js";
 
+config();
+connectDB();
 const app = express();
 
 //API Routes
@@ -13,11 +18,26 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })
 
-//GET, POST, PUT, DELETE
-//http://localhost:5001/auth/login
-//http://localhost:5001/movies/get
+process.on("unhandledRejection", (err) => {
+    console.log("Unhandled Rejection: ", err);
+    server.close(async () => {
+        await disconnectDB();
+        process.exit(1); // Exit the process with an error code
+    })
+});
 
-// AUTH - signin, sign up
-// MOVIE - GETTING ALL MOVIES
-// USER - PROFILE
-// WATCHLIST - ADDING MOVIES TO WATCHLIST
+process.on("uncaughtException", (err) => {
+    console.log("Uncaught Exception: ", err);
+    server.close(async () => {
+        await disconnectDB();
+        process.exit(1); // Exit the process with an error code
+    })
+});
+
+process.on("SIGTERM", (err) => {
+    console.log("SIGTERM received: shutting down ", err);
+    server.close(async () => {
+        await disconnectDB();
+        process.exit(1); // Exit the process with an error code
+    })
+});
