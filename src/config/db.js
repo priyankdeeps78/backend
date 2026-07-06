@@ -1,12 +1,19 @@
-import {PrismaClient} from "@prisma/client";
+import "dotenv/config";
+import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@prisma/client";
+
+const adapter = new PrismaPg({
+    connectionString: process.env.DATABASE_URL,
+});
 
 const prisma = new PrismaClient({
+    adapter,
     log: process.env.NODE_ENV === "development" ? ["query", "info", "warn", "error"] : ["error"],
 });
 
 const connectDB = async () => {
     try{
-        await prisma.$connet();
+        await prisma.$connect();
         console.log("Database connected successfully");
     } catch (error) {
         console.log("Error connecting to the database: ", error);
@@ -15,7 +22,7 @@ const connectDB = async () => {
 };
 
 const disconnectDB = async () => {
-    await prisma.$disconnectDB();
+    await prisma.$disconnect();
 }
 
-export default {prisma, connectDB, disconnectDB};
+export {prisma, connectDB, disconnectDB};

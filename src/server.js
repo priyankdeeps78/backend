@@ -5,6 +5,7 @@ import {connectDB, disconnectDB} from "./config/db.js";
 
 //Importing routes
 import movieRoutes from "./routes/movieRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 config();
 connectDB();
@@ -12,9 +13,10 @@ const app = express();
 
 //API Routes
 app.use("/movies", movieRoutes);
+app.use("/auth", authRoutes);
 
 const PORT = 5001;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })
 
