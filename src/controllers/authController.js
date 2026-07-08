@@ -45,7 +45,9 @@ return res.status(201).json({
 
 
 const login = async (req, res) => {
-    const {email, password} = req.body;
+    const body = req.body;
+
+    const {email, password} = body;
 
     //Check if user exists
 
@@ -56,10 +58,16 @@ const login = async (req, res) => {
     });
 
     if (!user) {
-        return res.status(400).json({message: "Invalid credentials"});
+        return res.status(400).json({message: "Invalid email or password"});
     }
 
     //Check if password is correct
+    const isPasswordValide = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValide) {
+        return res.status(400).json({message: "Invalid email or password"});
+    }
+
 }
 
 
